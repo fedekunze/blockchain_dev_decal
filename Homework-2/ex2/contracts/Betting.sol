@@ -1,8 +1,8 @@
 pragma solidity ^0.4.15;
 
-contract BettingContract {
+contract Betting {
 	/* Standard state variables */
-	address owner;
+	address public owner;
 	address public gamblerA;
 	address public gamblerB;
 	address public oracle;
@@ -23,6 +23,7 @@ contract BettingContract {
 	/* Add any events you think are necessary */
 	event BetMade(address gambler);
 	event BetClosed();
+	event BetsReseted();
 	event WinningAmounts(address accountAddress, uint amount);
 
 	/* Uh Oh, what are these? */
@@ -30,7 +31,10 @@ contract BettingContract {
 		require(owner == msg.sender);
 		require((owner != gamblerA) && (owner != gamblerB));
 		 _; }
-	modifier OracleOnly() { require(oracle == msg.sender);  _;}
+	modifier OracleOnly() {
+		require(oracle == msg.sender);
+		_;
+	}
 
 	modifier GamblerOnly() {
 		require(msg.sender != oracle);
@@ -129,6 +133,7 @@ contract BettingContract {
 	function contractReset() private {
 		delete(bets[gamblerA]);
 		delete(bets[gamblerB]);
+		BetsReseted();
 	}
 
 	/* Fallback function */

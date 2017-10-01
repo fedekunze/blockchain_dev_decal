@@ -1,6 +1,6 @@
-var BettingContract = artifacts.require("./BettingContract.sol");
+var Betting = artifacts.require("./Betting.sol");
 
 module.exports = function(deployer) {
 	var testOutcomes = [1, 2, 3];
-	deployer.deploy(BettingContract, testOutcomes);
+	deployer.deploy(Betting, testOutcomes);
 };
