@@ -28,29 +28,54 @@ contract Betting {
 
 	/* Uh Oh, what are these? */
 	modifier OwnerOnly() {
-		require(owner == msg.sender);
+		if (owner == msg.sender) {
+			_;
+		}
+		/*require(owner == msg.sender);
 		require((owner != gamblerA) && (owner != gamblerB));
-		 _; }
+		 _;*/
+	 }
+
 	modifier OracleOnly() {
-		require(oracle == msg.sender);
-		_;
+		if (oracle == msg.sender) {
+			_;
+		}
+		/*require(oracle == msg.sender);
+		_;*/
 	}
 
 	modifier GamblerOnly() {
-		require(msg.sender != oracle);
+		if ((msg.sender != oracle) && (msg.sender != owner)) {
+			_;
+		}
+		/*require(msg.sender != oracle);
 		require(msg.sender != owner);
-		_;
+		_;*/
 	}
 
 	// Prevents gambler to make more than one bet
 	modifier OneBetOnly() {
-		require(bets[msg.sender].initialized == false);
-		_;
+		if (bets[msg.sender].initialized == false){
+			_;
+		}
+		/*require(bets[msg.sender].initialized == false);
+		_;*/
+	}
+
+	modifier DistinctGamblers() {
+		if (gamblerA != gamblerB) {
+			_;
+		}
+		/*require(gamblerA != gamblerB);
+		_;*/
 	}
 
 	modifier BetsPlaced() {
-		require(bets[gamblerA].initialized && bets[gamblerB].initialized);
-		_;
+		if (bets[gamblerA].initialized && bets[gamblerB].initialized) {
+			_;
+		}
+		/*require(bets[gamblerA].initialized && bets[gamblerB].initialized);
+		_;*/
 	}
 
 
@@ -68,7 +93,11 @@ contract Betting {
 
 	/* Gamblers place their bets, preferably after calling checkOutcomes */
 	function makeBet(uint _outcome) payable GamblerOnly() OneBetOnly() returns (bool) {
-
+		if ((gamblerA == address(0)) && (gamblerB == address(0))) {
+			gamblerA = msg.sender;
+		} else if ((gamblerA != address(0)) && (gamblerB == address(0))) {
+			gamblerB = msg.sender;
+		}
 		bets[msg.sender] = Bet({
 				outcome: _outcome,
 				amount: msg.value,
@@ -79,7 +108,11 @@ contract Betting {
 	}
 
 	/* The oracle chooses which outcome wins */
-	function makeDecision(uint _outcome) OracleOnly() BetsPlaced() {
+	function makeDecision(uint _outcome)
+		OracleOnly()
+		DistinctGamblers()
+		BetsPlaced()
+	{
 		/* If all gamblers bet on the same outcome, reimburse all gamblers their funds
 		If no gamblers bet on the correct outcome, the oracle wins the sum of the funds
 		*/
@@ -114,9 +147,12 @@ contract Betting {
 
 	/* Allow anyone to withdraw their winnings safely (if they have enough) */
 	function withdraw(uint withdrawAmount) returns (uint remainingBal) {
-		msg.sender.transfer(withdrawAmount); // reverts if error
-		winnings[msg.sender] -= withdrawAmount;
-		remainingBal = this.balance;
+		remainingBal = winnings[msg.sender];
+		if (remainingBal > withdrawAmount) {
+			remainingBal -= withdrawAmount;
+			winnings[msg.sender] -= withdrawAmount;
+			msg.sender.transfer(withdrawAmount); // reverts if error
+		}
 	}
 
 	/* Allow anyone to check the outcomes they can bet on */
