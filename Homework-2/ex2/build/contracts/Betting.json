@@ -302,8 +302,56 @@
       "links": {},
       "address": "0x90879fcfbd7c4399521025429e5972065cc6228d",
       "updated_at": 1506885212702
+    },
+    "1507701960562": {
+      "events": {
+        "0xdcd2da66e8984bfcbbe0c67e276d4409dc4f49b29be35637f00eb421e60c010f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "gambler",
+              "type": "address"
+            }
+          ],
+          "name": "BetMade",
+          "type": "event"
+        },
+        "0x077212d4d7a1f32f5a1799a3b05e05b15f3ad33584b11615f0b68d9c4c03fd62": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "BetClosed",
+          "type": "event"
+        },
+        "0x8e585c225684c77dcfe25b3b3291f8c200fccfa81418f7b435458165da55bb7c": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "BetsReseted",
+          "type": "event"
+        },
+        "0xe1e1392a7ec5f5a76b412decbbd6eb0be5496ee9b204b3e0487d1554bf57a995": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "accountAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "WinningAmounts",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xbae63c0fcc06901661efa13e46a0b9218ef94da9",
+      "updated_at": 1507701976879
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1506887871504
+  "updated_at": 1507701976879
 }
