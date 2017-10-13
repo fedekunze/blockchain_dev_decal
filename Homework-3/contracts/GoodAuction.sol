@@ -32,15 +32,11 @@ contract GoodAuction is AuctionInterface {
 	/* New withdraw function, shifts to push paradigm */
 	function withdrawRefund() external returns(bool) {
 		// YOUR CODE HERE
-		address sender = msg.sender;
-		uint amount = refunds[sender];
-		refunds[sender] = 0;
-    if (amount > 0) {
-      sender.transfer(amount);
-			amount = 0;
-			return true;
-    }
-		return false;
+
+		uint amount = refunds[msg.sender];
+		refunds[msg.sender] = 0;
+    msg.sender.transfer(amount);
+		return true;
 	}
 
 	/* Allow users to check the amount they can withdraw */
