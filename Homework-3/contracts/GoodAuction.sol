@@ -13,26 +13,28 @@ contract GoodAuction is AuctionInterface {
 	 * Must return false on failure and allow people to
 	 * retrieve their funds
 	 */
+	 event LogDepositReceived(address addr);
+
 	function bid() payable external returns(bool) {
 		// YOUR CODE HERE
-		highestBidder = getHighestBidder();
-		highestBid = getHighestBid();
-		uint value = msg.value;
-		address bidder = msg.sender;
-		if (value <= highestBid) return false;
-		else {
+		/*uint value = msg.value;*/
+		/*address bidder = msg.sender;*/
+		if (msg.value > getHighestBid()) {
 			// refund previous highest bidder
-			if (highestBidder != address(0) && highestBidder != bidder) refunds[highestBidder] += highestBid;
-			highestBid = value;
-			highestBidder = bidder;
+			if ((getHighestBidder() != address(0)) && (getHighestBidder() != msg.sender)) refunds[getHighestBidder()] += getHighestBid();
+			highestBidder = msg.sender;
+			highestBid = msg.value;
 			return true;
+		}
+		else {
+			refunds[msg.sender] += msg.value;
+			return false;
 		}
 	}
 
 	/* New withdraw function, shifts to push paradigm */
-	function withdrawRefund() external returns(bool) {
+	function withdrawRefund() payable external returns(bool) {
 		// YOUR CODE HERE
-
 		uint amount = refunds[msg.sender];
 		refunds[msg.sender] = 0;
     msg.sender.transfer(amount);
@@ -47,6 +49,6 @@ contract GoodAuction is AuctionInterface {
 	/* Give people their funds back */
 	function () payable {
 		// YOUR CODE HERE
-		revert();
+		LogDepositReceived(msg.sender);
 	}
 }

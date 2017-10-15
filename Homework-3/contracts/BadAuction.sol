@@ -10,6 +10,9 @@ contract BadAuction is AuctionInterface {
 	 * Must return false on failure and send people
 	 * their funds back
 	 */
+
+
+	event LogDepositReceived(address addr);
 	function bid() payable external returns (bool) {
 		// YOUR CODE HERE
 
@@ -17,10 +20,14 @@ contract BadAuction is AuctionInterface {
 			msg.sender.transfer(msg.value);
 			return false;
 		} else {
-			highestBidder.transfer(highestBid);
+
+			if (highestBidder != address(0) && !getHighestBidder().send(getHighestBid())){
+				// in case you get a poisoned contract
+				msg.sender.transfer(msg.value);
+				return false;
+			}
 			highestBidder = msg.sender;
 			highestBid =  msg.value;
-
 			return true;
 		}
 	}
@@ -28,6 +35,6 @@ contract BadAuction is AuctionInterface {
 	/* Give people their funds back */
 	function () payable {
 		// YOUR CODE HERE
-		revert();
+		LogDepositReceived(msg.sender);
 	}
 }
